@@ -53,7 +53,7 @@ export default {
   name: "ResultForm",
   components: { ListQuestion, ContainerGraph, ResultTable },
   created() {
-    this.options = this.generateOptions(6);
+    this.options = this.generateOptions(7);
   },
   data() {
     return {
