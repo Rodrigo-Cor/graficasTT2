@@ -1,122 +1,259 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="radio"
-        id="checkAnswerInitialFinal"
-        name="formGraph"
-        value="answerInitialFinal"
-        v-model="answerTypeGraph"
-        :disabled="stateDisabled"
-      />
-      <label class="form-check-label" for="checkAnswerInitialFinal">
-        Comparativa entre respuestas iniciales y finales
-      </label>
-    </div>
-    <div class="form-check">
-      <input
-        class="form-check-input"
-        type="radio"
-        id="answerAllIndividual"
-        name="formGraph"
-        value="answerAllIndividual"
-        v-model="answerTypeGraph"
-        :disabled="stateDisabled"
-      />
-      <label class="form-check-label" for="answerAllIndividual">
-        Comparativa individual de las respuestas
-      </label>
-    </div>
-    <select
-      class="form-select"
-      v-model="localSelectedOption"
-      :disabled="stateDisabled"
-      v-if="answerTypeGraph === 'answerInitialFinal'"
-    >
-      <option value="" disabled>Selecciona una opción</option>
-      <template v-for="option in options">
-        <option :value="option">Pregunta: {{ option + 1 }}</option>
-      </template>
-    </select>
+  <p>Elegir la pregunta para saber los datos</p>
+  <select
+    class="form-select"
+    v-model="localSelectedOption"
+    :disabled="stateDisabled"
+  >
+    <option value="" disabled>Selecciona una opción</option>
+    <template v-for="option in options">
+      <option :value="option">Pregunta: {{ option + 1 }}</option>
+    </template>
+  </select>
 
-    <button type="submit" class="btn btn-info" v-if="answerTypeGraph !== ''">
-      {{
-        stateDisabled
-          ? "Generando..."
-          : answerTypeGraph === "answerInitialFinal"
-          ? "Generar graficas"
-          : "Generar tabla"
-      }}
-    </button>
-  </form>
-
-  <div v-if="showGraph && answerTypeGraph === 'answerInitialFinal'" class="row">
-    <div class="col-6">
-      <Doughnut
-        class="chart-container"
-        :data="chartDataInitial"
-        :options="chartOptions"
-        :key="idGraphInitial"
-      />
+  <template v-if="resultsNumberQuestion.length !== 0">
+    <div class="row">
+      <div class="col-6">
+        <div class="d-flex align-items-center flex-column text-center">
+          <p class="fsw-bold">
+            Pregunta inicio:
+            {{ questions[localSelectedOption].start.question }}
+          </p>
+          <ListQuestion
+            :options="questions[localSelectedOption].start.options"
+          />
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="d-flex align-items-center flex-column text-center">
+          <p class="fsw-bold">
+            Pregunta final:
+            {{ questions[localSelectedOption].final.question }}
+          </p>
+          <ListQuestion
+            :options="questions[localSelectedOption].final.options"
+          />
+        </div>
+      </div>
     </div>
-    <div class="col-6">
-      <Doughnut
-        class="chart-container"
-        :data="chartDataFinal"
-        :options="chartOptions"
-        :key="idGraphFinal"
-      />
-    </div>
-  </div>
-  <ResultTable
-    v-if="answerTypeGraph === 'answerAllIndividual' && showTable"
-    :resultsAnswers="resultsNumberQuestion"
-  />
+    <ContainerGraph :resultsAnswers="resultsNumberQuestion" />
+    <ResultTable :resultsAnswers="resultsNumberQuestion" />
+  </template>
 </template>
 
 <script>
-const { v4: uuidv4 } = require("uuid");
 import axios from "axios";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "vue-chartjs";
-ChartJS.register(ArcElement, Tooltip, Legend);
 
+import ListQuestion from "@/components/ListQuestion.vue";
+import ContainerGraph from "@/components/ContainerGraph.vue";
 import ResultTable from "@/components/ResultTable.vue";
 import { genericAlert } from "@/globalFunctions.js";
 
 export default {
   name: "ResultForm",
-  components: { Doughnut, ResultTable },
+  components: { ListQuestion, ContainerGraph, ResultTable },
   created() {
     this.options = this.generateOptions(6);
   },
   data() {
     return {
-      answerTypeGraph: "",
       options: [],
       localSelectedOption: "",
       resultsNumberQuestion: [],
-
       stateDisabled: false,
-
-      idGraphInitial: "",
-      chartDataInitial: {
-        labels: [],
-        datasets: [],
-      },
-
-      idGraphFinal: "",
-      chartDataFinal: {
-        labels: [],
-        datasets: [],
-      },
-
-      chartOptions: {
-        responsive: true,
-      },
-      showGraph: false,
-      showTable: false,
+      messageNoData: "No hay datos sobre la pregunta ",
+      questions: [
+        {
+          start: {
+            question: '¿Has escuchado el término "microplásticos"?',
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿Qué tan frecuentemente has escuchado este término de microplásticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Cuál es el nivel de prioridad para difundir información sobre el impacto de microplásticos en ecosistemas acuáticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿Cómo ha cambiado tu nivel de prioridad sobre el impacto de estas partículas sobre ecosistemas acuáticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Te preocupa que los seres vivos acuáticos sufran a causa de la contaminación por microplásticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿Qué nivel de preocupación consideras los efectos que pueden producir los microplásticos en los seres acuáticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Con qué nivel de frecuencia compra productos de plástico?",
+            options: [
+              { option: "Nada", value: 4 },
+              { option: "Un poco", value: 3 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 1 },
+              { option: "Extremadamente", value: 0 },
+            ],
+          },
+          final: {
+            question:
+              "¿En qué nivel has reducido tu frecuencia en la compra de productos de plástico?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Qué tan consciente estás de la contaminación por microplásticos en México?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿Qué tanto cambio tu nivel de conciencia sobre la contaminación por microplásticos en México?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Te has dado cuenta de que es muy probable que hayas ingerido microplásticos? ",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question: "¿Ya te disté cuenta de que consumiste microplásticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Has escuchado sobre alguna técnica de limpieza de microplásticos en el agua?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿Identificaste alguna técnica de limpieza de microplásticos en el agua?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+        {
+          start: {
+            question:
+              "¿Tienes información sobre el cambio de hábitos para eliminar el consumo de productos plásticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+          final: {
+            question:
+              "¿La información te sirvió para crearte hábitos de reducción de consumo de productos plásticos?",
+            options: [
+              { option: "Nada", value: 0 },
+              { option: "Un poco", value: 1 },
+              { option: "Algo", value: 2 },
+              { option: "Moderadamente", value: 3 },
+              { option: "Extremadamente", value: 4 },
+            ],
+          },
+        },
+      ],
     };
   },
   methods: {
@@ -129,88 +266,35 @@ export default {
     },
     async getResults(numberQuestion) {
       const response = await axios.post(
-        "http://localhost:7071/api/GetResultsQuestion",
+        "https://microplasticosapi.azurewebsites.net/api/GetResultsQuestion?code=A6NuHq3gDUKSXOac0_7ZW0UA02q6DpKQmvDbcNQABWPbAzFuPaIS7w==",
         {
           numberQuestion: numberQuestion,
         }
       );
       this.resultsNumberQuestion = await response.data;
+      (await response.data.length) === 0
+        ? (genericAlert(this.messageNoData + (numberQuestion + 1), "warning"),
+          (this.localSelectedOption = ""))
+        : null;
     },
-    async methodAnswerInitialFinal() {
-      await this.getResults(this.localSelectedOption);
-      this.idGraphInitial = this.generateDataGraph(
-        "initialAnswer",
-        this.chartDataInitial
-      );
-
-      this.idGraphFinal = this.generateDataGraph(
-        "finalAnswer",
-        this.chartDataFinal
-      );
-      this.showGraph = true;
-    },
-    getDataChart(typeChart) {
-      const occurrences = {};
-      this.resultsNumberQuestion.forEach((element) => {
-        const dataChartAnswer = element[typeChart]["option"];
-
-        if (occurrences.hasOwnProperty(dataChartAnswer)) {
-          occurrences[dataChartAnswer].value++;
-        } else {
-          occurrences[dataChartAnswer] = {
-            option: dataChartAnswer,
-            value: 1,
-          };
-        }
-      });
-      return occurrences;
-    },
-    generateDataGraph(typeQuestion, chartData) {
-      const idGraph = uuidv4();
-      const objetValuesOcurrences = this.getDataChart(typeQuestion);
-      const optionValues = Object.values(objetValuesOcurrences).map(
-        (item) => item.value
-      );
-      chartData["datasets"] = [
-        {
-          data: optionValues,
-          backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
-        },
-      ];
-      chartData["labels"] = Object.keys(objetValuesOcurrences);
-      return idGraph;
-    },
-    async submitForm() {
+    async getAnswer(newOption) {
       try {
         this.stateDisabled = true;
-        this.answerTypeGraph === "answerInitialFinal"
-          ? await this.methodAnswerInitialFinal()
-          : (await this.getResults(""), (this.showTable = true));
+        await this.getResults(newOption);
       } catch (error) {
         genericAlert(error.message, "error");
-        this.showTable = false;
       } finally {
         this.stateDisabled = false;
       }
     },
   },
   watch: {
-    answerTypeGraph() {
-      this.showGraph = false;
-      this.showTable = false;
-    },
-    localSelectedOption() {
-      this.showGraph = false;
-      this.showTable = false;
+    localSelectedOption(newOption) {
+      if (newOption !== "") {
+        this.resultsNumberQuestion = [];
+        this.getAnswer(newOption);
+      }
     },
   },
 };
 </script>
-
-<style scoped>
-.chart-container {
-  max-width: 400px;
-  max-height: 400px;
-  margin: 0 auto;
-}
-</style>
