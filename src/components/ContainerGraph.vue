@@ -35,17 +35,8 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "vue-chartjs";
 ChartJS.register(ArcElement, Tooltip, Legend);
-import randomColor from "randomcolor";
 
 export default {
-  mounted() {
-    this.color = randomColor({
-      count: 5,
-      luminosity: "light",
-      format: "hex",
-      hue: "blue",
-    });
-  },
   name: "ContainerGraph",
   props: {
     resultsAnswers: {
@@ -62,7 +53,6 @@ export default {
         initialAnswer: [],
         finalAnswer: [],
       },
-      color: [],
     };
   },
   components: { Doughnut },
@@ -110,7 +100,7 @@ export default {
       chartData["datasets"] = [
         {
           data: optionValues,
-          backgroundColor: this.color,
+          backgroundColor: ["#86A789", "#A9A9A9", "#FECDA6", "#FF9130", "#FF5B22"],
         },
       ];
       chartData["labels"] = Object.keys(objetValuesOcurrences);
