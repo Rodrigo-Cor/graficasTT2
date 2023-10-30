@@ -65,7 +65,6 @@ export default {
       },
     };
   },
-  computed: {},
   methods: {
     getAverage(typeAnswer) {
       let sumaValues = 0;

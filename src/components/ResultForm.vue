@@ -1,44 +1,46 @@
 <template>
-  <p>Elegir la pregunta para saber los datos</p>
-  <select
-    class="form-select"
-    v-model="localSelectedOption"
-    :disabled="stateDisabled"
-  >
-    <option value="" disabled>Selecciona una opción</option>
-    <template v-for="option in options">
-      <option :value="option">Pregunta: {{ option + 1 }}</option>
-    </template>
-  </select>
+  <section>
+    <p>Elegir la pregunta para saber los datos</p>
+    <select
+      class="form-select"
+      v-model="localSelectedOption"
+      :disabled="stateDisabled"
+    >
+      <option value="" disabled>Selecciona una opción</option>
+      <template v-for="option in options">
+        <option :value="option">Pregunta: {{ option + 1 }}</option>
+      </template>
+    </select>
 
-  <template v-if="resultsNumberQuestion.length !== 0">
-    <div class="row">
-      <div class="col-6">
-        <div class="d-flex align-items-center flex-column text-center">
-          <p class="fsw-bold">
-            Pregunta inicio:
-            {{ questions[localSelectedOption].start.question }}
-          </p>
-          <ListQuestion
-            :options="questions[localSelectedOption].start.options"
-          />
+    <template v-if="resultsNumberQuestion.length !== 0">
+      <div class="row">
+        <div class="col-6">
+          <div class="d-flex align-items-center flex-column text-center">
+            <p class="fsw-bold">
+              Pregunta inicio:
+              {{ questions[localSelectedOption].start.question }}
+            </p>
+            <ListQuestion
+              :options="questions[localSelectedOption].start.options"
+            />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="d-flex align-items-center flex-column text-center">
+            <p class="fsw-bold">
+              Pregunta final:
+              {{ questions[localSelectedOption].final.question }}
+            </p>
+            <ListQuestion
+              :options="questions[localSelectedOption].final.options"
+            />
+          </div>
         </div>
       </div>
-      <div class="col-6">
-        <div class="d-flex align-items-center flex-column text-center">
-          <p class="fsw-bold">
-            Pregunta final:
-            {{ questions[localSelectedOption].final.question }}
-          </p>
-          <ListQuestion
-            :options="questions[localSelectedOption].final.options"
-          />
-        </div>
-      </div>
-    </div>
-    <ContainerGraph :resultsAnswers="resultsNumberQuestion" />
-    <ResultTable :resultsAnswers="resultsNumberQuestion" />
-  </template>
+      <ContainerGraph :resultsAnswers="resultsNumberQuestion" />
+      <ResultTable :resultsAnswers="resultsNumberQuestion" />
+    </template>
+  </section>
 </template>
 
 <script>
