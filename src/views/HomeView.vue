@@ -1,7 +1,7 @@
 <template>
-  <div class="container mt-2">
+  <main class="container-fluid mt-2">
     <ResultForm/>
-  </div>
+  </main>
 </template>
 
 <script>

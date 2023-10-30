@@ -1,34 +1,32 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-6">
-        <Doughnut
-          class="chart-container"
-          :data="chartData('initialAnswer')"
-          :options="chartOptions"
-        />
-      </div>
-      <div class="col-6">
-        <Doughnut
-          class="chart-container"
-          :data="chartData('finalAnswer')"
-          :options="chartOptions"
-        />
-      </div>
-      <div class="col-6 text-center">
-        {{
-          trend.initialAnswer.length === 1
-            ? "Moda inicial: " + trend.initialAnswer[0]
-            : "Modas iniciales: " + trend.initialAnswer.join(",")
-        }}
-      </div>
-      <div class="col-6 text-center">
-        {{
-          trend.initialAnswer.length === 1
-            ? "Moda final: " + trend.finalAnswer[0]
-            : "Modas finales: " + trend.finalAnswer.join(",")
-        }}
-      </div>
+  <div class="row">
+    <div class="col-6">
+      <Doughnut
+        class="chart-container"
+        :data="chartData('initialAnswer')"
+        :options="chartOptions"
+      />
+    </div>
+    <div class="col-6">
+      <Doughnut
+        class="chart-container"
+        :data="chartData('finalAnswer')"
+        :options="chartOptions"
+      />
+    </div>
+    <div class="col-6 text-center">
+      {{
+        trend.initialAnswer.length === 1
+          ? "Moda inicial: " + trend.initialAnswer[0]
+          : "Modas iniciales: " + trend.initialAnswer.join(",")
+      }}
+    </div>
+    <div class="col-6 text-center">
+      {{
+        trend.initialAnswer.length === 1
+          ? "Moda final: " + trend.finalAnswer[0]
+          : "Modas finales: " + trend.finalAnswer.join(",")
+      }}
     </div>
   </div>
 </template>
@@ -37,8 +35,16 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "vue-chartjs";
 ChartJS.register(ArcElement, Tooltip, Legend);
+import randomColor from "randomcolor";
 
 export default {
+  mounted() {
+    this.color = randomColor({
+      count: 5,
+      luminosity: "light",
+      hue: "blue",
+    });
+  },
   name: "ContainerGraph",
   props: {
     resultsAnswers: {
@@ -55,6 +61,7 @@ export default {
         initialAnswer: [],
         finalAnswer: [],
       },
+      color: [],
     };
   },
   components: { Doughnut },
@@ -102,7 +109,7 @@ export default {
       chartData["datasets"] = [
         {
           data: optionValues,
-          backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+          backgroundColor: this.color,
         },
       ];
       chartData["labels"] = Object.keys(objetValuesOcurrences);
@@ -117,8 +124,8 @@ export default {
 
 <style scoped>
 .chart-container {
-  max-width: 200px;
-  max-height: 200px;
+  max-width: 300px;
+  max-height: 300px;
   margin: 0 auto;
 }
 </style>
