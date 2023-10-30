@@ -42,6 +42,7 @@ export default {
     this.color = randomColor({
       count: 5,
       luminosity: "light",
+      format: "hex",
       hue: "blue",
     });
   },
