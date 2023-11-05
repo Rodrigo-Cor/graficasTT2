@@ -67,7 +67,7 @@ export default {
     getAverage(typeAnswer) {
       let sumaValues = 0;
       this.resultsAnswers.map((result) => {
-        const value = parseFloat(result[typeAnswer]["value"]);
+        let value = parseFloat(result[typeAnswer]["value"]);
         sumaValues += value;
       });
 
