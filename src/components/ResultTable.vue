@@ -8,17 +8,15 @@
       </tr>
     </thead>
     <tbody v-for="(resultUser, index) in resultsAnswers" :key="resultUser.id">
-      <tr
-        v-bind:class="{
-          'table-success':
-            resultUser.initialAnswer['value'] < resultUser.finalAnswer['value'],
-          'table-danger':
-            resultUser.initialAnswer['value'] > resultUser.finalAnswer['value'],
-          'table-warning':
-            resultUser.initialAnswer['value'] ===
-            resultUser.finalAnswer['value'],
-        }"
-      >
+      <tr v-bind:class="{
+        'table-success':
+          resultUser.initialAnswer['value'] < resultUser.finalAnswer['value'],
+        'table-danger':
+          resultUser.initialAnswer['value'] > resultUser.finalAnswer['value'],
+        'table-warning':
+          resultUser.initialAnswer['value'] ===
+          resultUser.finalAnswer['value'],
+      }">
         <th scope="row">{{ index + 1 }}</th>
         <td>
           {{ resultUser.initialAnswer["option"] }}
@@ -69,11 +67,12 @@ export default {
     getAverage(typeAnswer) {
       let sumaValues = 0;
       this.resultsAnswers.map((result) => {
-        sumaValues += result[typeAnswer]["value"];
+        const value = parseFloat(result[typeAnswer]["value"]);
+        sumaValues += value;
       });
 
       this.average[typeAnswer] = sumaValues / this.resultsAnswers.length;
-      return sumaValues / this.resultsAnswers.length;
+      return this.average[typeAnswer];
     },
     getStandardDesviation(typeAnswer) {
       let sumaValues = 0;
