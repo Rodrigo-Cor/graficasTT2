@@ -14,14 +14,14 @@
         :options="chartOptions"
       />
     </div>
-    <div class="col-6 text-center">
+    <div class="col-6 text-center fs-5">
       {{
         trend.initialAnswer.length === 1
           ? "Moda inicial: " + trend.initialAnswer[0]
           : "Modas iniciales: " + trend.initialAnswer.join(",")
       }}
     </div>
-    <div class="col-6 text-center">
+    <div class="col-6 text-center fs-5">
       {{
         trend.initialAnswer.length === 1
           ? "Moda final: " + trend.finalAnswer[0]

@@ -1,10 +1,11 @@
 <template>
   <section>
-    <p>Elegir la pregunta para saber los datos</p>
+    <p>Elegir la pregunta</p>
     <select
       class="form-select"
       v-model="localSelectedOption"
       :disabled="stateDisabled"
+      name="question"
     >
       <option value="" disabled>Selecciona una opción</option>
       <template v-for="option in options">
@@ -37,8 +38,10 @@
           </div>
         </div>
       </div>
-      <ContainerGraph :resultsAnswers="resultsNumberQuestion" />
-      <ResultTable :resultsAnswers="resultsNumberQuestion" />
+      <ContainerGraph
+        :resultsAnswers="resultsNumberQuestion"
+      />
+      <ResultTable :resultsAnswers="resultsNumberQuestion" :numberQuestion="localSelectedOption"/>
     </template>
   </section>
 </template>
@@ -141,11 +144,11 @@ export default {
             question:
               "¿Con qué nivel de frecuencia compra productos de plástico?",
             options: [
-              { option: "Nada", value: 4 },
-              { option: "Un poco", value: 3 },
+              { option: "Extemadamente", value: 0 },
+              { option: "Moderamente", value: 1 },
               { option: "Algo", value: 2 },
-              { option: "Moderadamente", value: 1 },
-              { option: "Extremadamente", value: 0 },
+              { option: "Un poco", value: 3 },
+              { option: "Nada", value: 4 },
             ],
           },
           final: {
