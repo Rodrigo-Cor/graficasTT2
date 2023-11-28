@@ -1,5 +1,5 @@
 <template>
-  <main class="container-fluid mt-2">
+  <main class="container mt-2 p-5">
     <ResultForm/>
   </main>
 </template>

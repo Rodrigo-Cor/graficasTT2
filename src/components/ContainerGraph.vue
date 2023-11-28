@@ -15,6 +15,7 @@
       />
     </div>
     <div class="col-6 text-center fs-5">
+      <div>N={{ resultsAnswers.length }}</div>
       {{
         trend.initialAnswer.length === 1
           ? "Moda inicial: " + trend.initialAnswer[0]
@@ -22,6 +23,7 @@
       }}
     </div>
     <div class="col-6 text-center fs-5">
+      <div>N={{ resultsAnswers.length }}</div>
       {{
         trend.initialAnswer.length === 1
           ? "Moda final: " + trend.finalAnswer[0]
@@ -100,7 +102,13 @@ export default {
       chartData["datasets"] = [
         {
           data: optionValues,
-          backgroundColor: ["#86A789", "#A9A9A9", "#FECDA6", "#FF9130", "#FF5B22"],
+          backgroundColor: [
+            "#86A789",
+            "#A9A9A9",
+            "#FECDA6",
+            "#FF9130",
+            "#FF5B22",
+          ],
         },
       ];
       chartData["labels"] = Object.keys(objetValuesOcurrences);

@@ -34,11 +34,11 @@
       </span>
     </div>
     <div class="col-6 text-center fs-5">
-      Desviación estandar inicial:
+      Desviación estándar inicial:
       {{ getStandardDesviation("initialAnswer").toFixed(2) }}
     </div>
     <div class="col-6 text-center fs-5">
-      Desviación estandar final:
+      Desviación estándar final:
       {{ getStandardDesviation("finalAnswer").toFixed(2) }}
     </div>
   </div>
