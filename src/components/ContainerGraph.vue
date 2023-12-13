@@ -55,6 +55,13 @@ export default {
         initialAnswer: [],
         finalAnswer: [],
       },
+      optionColors: {
+        "Nada": "#FF5B22",
+        "Un poco": "#FF9130",
+        "Algo": "#A9A9A9",
+        "Moderadamente": "#FECDA6",
+        "Extremadamente": "#86A789",
+      },
     };
   },
   components: { Doughnut },
@@ -102,13 +109,9 @@ export default {
       chartData["datasets"] = [
         {
           data: optionValues,
-          backgroundColor: [
-            "#86A789",
-            "#A9A9A9",
-            "#FECDA6",
-            "#FF9130",
-            "#FF5B22",
-          ],
+          backgroundColor: Object.keys(objetValuesOcurrences).map(
+            (option) => this.optionColors[option]
+          ),
         },
       ];
       chartData["labels"] = Object.keys(objetValuesOcurrences);
@@ -127,4 +130,5 @@ export default {
   max-height: 300px;
   margin: 0 auto;
 }
+
 </style>
